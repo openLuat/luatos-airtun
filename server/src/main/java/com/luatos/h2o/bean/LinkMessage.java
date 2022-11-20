@@ -9,6 +9,7 @@ public class LinkMessage {
 	public LinkUpload upload;
 	public LinkReq req;
 	public LinkResp resp;
+	public LinkWs ws;
 	
 	public LinkMessage() {
 	}
