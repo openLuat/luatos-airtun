@@ -36,14 +36,16 @@ topic 使用
 ```json
 {
     "action": "conn",
-    "static_files" : {
-        "index.html" : {
-            "sha1" : "1234567891230",
-            "size" : 1234
-        },
-        "app.js" : {
-            "sha1" : "45678910564564",
-            "size" : 12343
+    "conn": {
+        "files" : {
+            "index.html" : {
+                "sha1" : "1234567891230",
+                "size" : 1234
+            },
+            "app.js" : {
+                "sha1" : "45678910564564",
+                "size" : 12343
+            }
         }
     }
 }
@@ -55,12 +57,14 @@ topic 使用
     "action": "conack",
     // 服务器端会对比静态文件缓存,如果有差异,会要求客户端上传新的
     // 若全部正常, static_files 就不会下发
-    "static_files" : { 
-        "index.html" : {
-            "upload" : true
-        },
-        "app.js" : {
-            "upload" : true
+    "conack": {
+        "files" : {
+            "index.html" : {
+                "upload" : true
+            },
+            "app.js" : {
+                "upload" : true
+            }
         }
     }
 }
@@ -71,14 +75,16 @@ topic 使用
 ```json
 {
     "action": "upload",
-    // 服务器端会对比静态文件缓存,如果有差异,会要求客户端上传新的
-    // 若全部正常, static_files 就不会下发
-    "data" : { 
+    "upload" : { 
         "name" : "index.html",
         // 若文件小于等于2048个字节,可单次直接上报
         "body" : "xxx", // 需要base64编码
         // 否则需要分段上传,每次分段1024字节.
-        "frag" : 2
+        "frag" : 2,
+        // 是否为最后一段
+        "end"  : false,
+        // 总文件大小是多少
+        "size" : 10240,
     }
 }
 ```
@@ -90,25 +96,23 @@ topic 使用
 ```json
 {
     "action" : "req",
-    "id"     : "12343425234534", // 该请求的id,上报resp时需要带上
-    "data" : {
-        "method" : "GET", // GET/POST 通常只有这两者
+    "req" : {
+        "id"     : "12343425234534", // 该请求的id,上报resp时需要带上
+        "method" : "GET", // 服务器强制会转大写再下发
         "uri"    : "/api/netled",
+
+        // 下面的所有字段,都是可选的, 不一定下发
         "headers" : {
             // 部分请求头, 不会全部下发到设备去
-        },
-        // URL中的请求参数, 会解析为table下发, 不一定存在
-        "query" : {
-
         },
         // 对应body, 会有不同的情况
         // 如果content-type是json
         "json" : {
             // body解析为json字符串再下发, 会提前校验值
         },
-        // 如果content-type是form
+        // 如果有请求参数,会放在这个字段里
         "form" : {
-            // 解析成table下发
+            // 如果没有参数, 这个form会不存在
         },
         // 不认识的数据, base64编码后下发, 原始数据不超过2048字节
         "body"   : "xxxxxx" // 请求的body
@@ -121,8 +125,8 @@ topic 使用
 ```json
 {
     "action" : "resp",
-    "id"     : "12343425234534", // 该请求的id,上报resp时需要带上
-    "data" : {
+    "resp" : {
+        "id"     : "12343425234534", // 该请求的id,上报resp时需要带上
         // 可选,响应码, 若不带这个值,默认200
         "code" : 200,
         // 可选, 需要添加的请求头
