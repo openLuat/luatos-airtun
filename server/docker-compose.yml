@@ -1,0 +1,23 @@
+version: '3.2'
+
+services:
+  mqttsrv:
+    image: eclipse-mosquitto
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto:/mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+    restart: unless-stopped
+  airtun:
+    image: registry.cn-beijing.aliyuncs.com/wendal/airtun
+    ports:
+      - 8080:8080
+    volumes:
+      - /opt/airtun:/opt/airtun
+    restart: unless-stopped
+    environment:
+      - airtun.mqtt.url=tcp://mqttsrv:1883
+    depends_on:
+      - mqttsrv

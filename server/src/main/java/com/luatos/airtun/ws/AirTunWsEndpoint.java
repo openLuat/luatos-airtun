@@ -1,4 +1,4 @@
-package com.luatos.h2o.ws;
+package com.luatos.airtun.ws;
 
 import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
@@ -9,7 +9,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.plugins.mvc.websocket.AbstractWsEndpoint;
 import org.nutz.plugins.mvc.websocket.WsHandler;
 
-import com.luatos.h2o.AppCore;
+import com.luatos.airtun.AppCore;
 
 /**
  * 页面websocket入口
@@ -17,7 +17,7 @@ import com.luatos.h2o.AppCore;
  */
 @ServerEndpoint(value = "/ws/h2o", configurator = NutWsConfigurator.class)
 @IocBean
-public class H2OWsEndpoint extends AbstractWsEndpoint {
+public class AirTunWsEndpoint extends AbstractWsEndpoint {
 
 	@Inject
 	protected AppCore app;
@@ -25,7 +25,7 @@ public class H2OWsEndpoint extends AbstractWsEndpoint {
 	public WsHandler createHandler(Session session, EndpointConfig config) {
 		String host = (String) session.getUserProperties().get("Host");
 		String clientId = AppCore.toClientId(host);;
-		H2OWsHandler handler = new H2OWsHandler(clientId, app);
+		AirTunWsHandler handler = new AirTunWsHandler(clientId, app);
 		handler.join(clientId);
 		return handler;
 	}

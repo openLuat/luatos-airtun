@@ -1,4 +1,4 @@
-package com.luatos.h2o;
+package com.luatos.airtun;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,13 +36,15 @@ import org.nutz.lang.random.R;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
-import com.luatos.h2o.bean.LinkConAck;
-import com.luatos.h2o.bean.LinkFile;
-import com.luatos.h2o.bean.LinkMessage;
-import com.luatos.h2o.ws.H2OWsEndpoint;
+import com.luatos.airtun.bean.LinkConAck;
+import com.luatos.airtun.bean.LinkFile;
+import com.luatos.airtun.bean.LinkMessage;
+import com.luatos.airtun.ws.AirTunWsEndpoint;
 
 @IocBean(create = "init", depose = "depose")
 public class AppCore implements MqttCallback {
+	
+	public static String VERSION = "1.0-Gift";
 
 	protected static final Log log = Logs.get();
 
@@ -54,7 +56,7 @@ public class AppCore implements MqttCallback {
 	
 	
 	// 注意, 这个bean虽然是ioc bean, 但不能注入,因为有循环依赖
-	protected H2OWsEndpoint endpoint;
+	protected AirTunWsEndpoint endpoint;
 
 	public MqttClient mqttc;
 
@@ -66,18 +68,18 @@ public class AppCore implements MqttCallback {
 
 	public void init() throws MqttException {
 		// NB自身初始化完成后会调用这个方法
-		cacheDir = conf.get("h2o.cache.dir", "/opt/h2o/cache");
-		dftDir = conf.get("h2o.dft.dir", "/opt/h2o/dft");
-		fragDir = conf.get("h2o.frag.dir", "/opt/h2o/frag");
+		cacheDir = conf.get("airtun.cache.dir", "/opt/airtun/cache");
+		dftDir = conf.get("airtun.dft.dir", "/opt/airtun/dft");
+		fragDir = conf.get("airtun.frag.dir", "/opt/airtun/frag");
 		Files.createDirIfNoExists(cacheDir);
 		Files.createDirIfNoExists(dftDir);
 		Files.createDirIfNoExists(fragDir);
 
 //    	String broker = "tcp://lbsmqtt.airm2m.com:1883";
-		String broker = conf.get("h2o.mqtt.url", "tcp://broker-cn.emqx.io:1883");
-		String clientId = conf.get("h2o.mqtt.client_id", R.UU32());
-		String username = conf.get("h2o.mqtt.username", R.UU32());
-		String password = conf.get("h2o.mqtt.password", R.UU32());
+		String broker = conf.get("airtun.mqtt.url", "tcp://broker-cn.emqx.io:1883");
+		String clientId = conf.get("airtun.mqtt.client_id", R.UU32());
+		String username = conf.get("airtun.mqtt.username", R.UU32());
+		String password = conf.get("airtun.mqtt.password", R.UU32());
 		MemoryPersistence persistence = new MemoryPersistence();
 		mqttc = new MqttClient(broker, clientId, persistence);
 
@@ -91,8 +93,8 @@ public class AppCore implements MqttCallback {
 		mqttc.setCallback(this);
 
 		mqttc.connect(connOpts);
-		mqttc.subscribe("$h2o/+/up");
-		log.info("mqtt ready");
+		mqttc.subscribe("$airtun/+/up");
+		log.info("airtun ready, version " + VERSION);
 	}
 
 	@Override
@@ -101,6 +103,7 @@ public class AppCore implements MqttCallback {
 		String clientId = topic.split("/")[1];
 		if (Strings.isBlank(clientId))
 			return;
+		clientId = clientId.toLowerCase();
 		byte[] buff = message.getPayload();
 		if (buff[0] == '{' && buff[buff.length - 1] == '}') {
 			try {
@@ -221,7 +224,7 @@ public class AppCore implements MqttCallback {
 					break;
 				case "ws" :
 					if (endpoint == null)
-						endpoint = ioc.get(H2OWsEndpoint.class);
+						endpoint = ioc.get(AirTunWsEndpoint.class);
 					endpoint.each(clientId, new Each<Session>() {
 						public void invoke(int index, Session ele, int length) throws ExitLoop, ContinueLoop, LoopException {
 							endpoint.sendJson(ele.getId(), msg);
@@ -254,7 +257,7 @@ public class AppCore implements MqttCallback {
 	public boolean publish2client(String clientId, LinkMessage msg) {
 		JsonFormat jf = JsonFormat.full().setIndentBy("").setCompact(true).setIgnoreNull(true);
 		try {
-			String topic = "$h2o/" + clientId + "/down";
+			String topic = "$airtun/" + clientId + "/down";
 			String data = Json.toJson(msg, jf);
 			log.infof("down %s %s", topic, data);
 			mqttc.publish(topic, data.getBytes(), 1, false);
@@ -266,9 +269,9 @@ public class AppCore implements MqttCallback {
 	}
 
 	public static String toClientId(String host) {
-		if (Strings.isBlank(host) || host.startsWith("127.0.0.1"))
-			return "6055F9779010"; // 暂时固定,测试嘛
-		return host.split("\\.")[0];
+		if (Strings.isBlank(host) || host.startsWith("127.0.0.1") || host.startsWith("192.168."))
+			return "6055F9779010".toLowerCase(); // 暂时固定,测试嘛
+		return host.split("\\.")[0].toLowerCase();
 	}
 
 	public void depose() throws MqttException {

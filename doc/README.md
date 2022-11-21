@@ -1,4 +1,4 @@
-# H2O 透传协议
+# AirTun 内网穿透协议
 
 ## 设计原则
 
@@ -14,17 +14,17 @@
 
 ## 通信设计
 
-### 浏览器 <--> H2O服务
+### 浏览器 <--> airtun服务
 
 使用http协议, 可能只支持GET/POST/HEAD之类的简单请求
 
-### 设备 <--> H2O 服务
+### 设备 <--> airtun 服务
 
 使用mqtt协议
 
 topic 使用
-1. 设备 --> H2O服务 h2o/$devid/uplink
-2. H2O服务 --> 设备 h2o/$devid/downlink
+1. 设备 --> airtun服务 $airtun/$devid/up
+2. airtun服务 --> 设备 $airtun/$devid/down
 
 ## 消息定义
 

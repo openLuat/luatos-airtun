@@ -1,4 +1,4 @@
-package com.luatos.h2o.ws;
+package com.luatos.airtun.ws;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.HandshakeResponse;

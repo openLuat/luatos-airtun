@@ -1,4 +1,4 @@
-package com.luatos.h2o.servlet;
+package com.luatos.airtun.servlet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,12 +30,12 @@ import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
-import com.luatos.h2o.AppCore;
-import com.luatos.h2o.bean.LinkMessage;
-import com.luatos.h2o.bean.LinkReq;
+import com.luatos.airtun.AppCore;
+import com.luatos.airtun.bean.LinkMessage;
+import com.luatos.airtun.bean.LinkReq;
 
 @IocBean
-public class H2O_AsyncServlet extends HttpServlet implements WebServletFace {
+public class AirTunAsyncServlet extends HttpServlet implements WebServletFace {
 
 	private static final long serialVersionUID = 1L;
 
@@ -189,7 +189,7 @@ public class H2O_AsyncServlet extends HttpServlet implements WebServletFace {
 
 	@Override
 	public String getName() {
-		return "h2o";
+		return "AirTun";
 	}
 
 	@Override

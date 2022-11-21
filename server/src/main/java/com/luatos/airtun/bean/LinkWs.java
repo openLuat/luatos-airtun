@@ -1,4 +1,4 @@
-package com.luatos.h2o.bean;
+package com.luatos.airtun.bean;
 
 import org.nutz.lang.util.NutMap;
 

@@ -1,8 +1,8 @@
-package com.luatos.h2o.bean;
+package com.luatos.airtun.bean;
 
 import java.util.Map;
 
-public class LinkConAck {
+public class LinkConn {
 
 	public Map<String, LinkFile> files;
 }

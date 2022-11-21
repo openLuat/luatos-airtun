@@ -1,4 +1,4 @@
-package com.luatos.h2o;
+package com.luatos.airtun;
 
 import org.nutz.boot.NbApp;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -20,7 +20,7 @@ public class MainLauncher {
     public void depose() {}
 
     public static void main(String[] args) throws Exception {
-        new NbApp().setArgs(args).setPrintProcDoc(true).run();
+        new NbApp().setArgs(args).setPrintProcDoc(false).run();
     }
 
 }

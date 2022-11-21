@@ -1,18 +1,18 @@
-package com.luatos.h2o.ws;
+package com.luatos.airtun.ws;
 
 import org.nutz.lang.util.NutMap;
 import org.nutz.plugins.mvc.websocket.handler.SimpleWsHandler;
 
-import com.luatos.h2o.AppCore;
-import com.luatos.h2o.bean.LinkMessage;
-import com.luatos.h2o.bean.LinkWs;
+import com.luatos.airtun.AppCore;
+import com.luatos.airtun.bean.LinkMessage;
+import com.luatos.airtun.bean.LinkWs;
 
-public class H2OWsHandler extends SimpleWsHandler {
+public class AirTunWsHandler extends SimpleWsHandler {
 
 	protected String clientId;
 	protected AppCore app;
 
-	public H2OWsHandler(String clientId, AppCore app) {
+	public AirTunWsHandler(String clientId, AppCore app) {
 		this.clientId = clientId;
 		this.app = app;
 	}

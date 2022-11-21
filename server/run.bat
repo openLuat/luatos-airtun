@@ -1,0 +1,1 @@
+docker run -it --rm -p 8080:8080 -e server.host=0.0.0.0 -v /opt/airtun:/opt/airtun registry.cn-beijing.aliyuncs.com/wendal/airtun
