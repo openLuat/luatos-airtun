@@ -21,3 +21,4 @@ services:
       - airtun.mqtt.url=tcp://mqttsrv:1883
     depends_on:
       - mqttsrv
+
