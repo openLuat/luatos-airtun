@@ -195,7 +195,7 @@ sys.taskInit(function()
     mqttc:connect()
     sys.waitUntil("mqtt_conack", 15000)
     while true do
-        local ret, topic, data, qos = sys.waitUntil("mqtt_pub", 30000)    
+        local ret, topic, data, qos = sys.waitUntil("mqtt_pub", 60000)    
         if ret then
             if topic == "close" then
                 break
@@ -205,7 +205,9 @@ sys.taskInit(function()
             end
         else
             if mqttc:ready() then
-                mqttc:publish(topic_up, (json.encode({action="ping"})))
+                local data = (json.encode({action="ping"}))
+                --log.info("airtun", "ping Go", topic_up, data)
+                mqttc:publish(topic_up, data, 1)
             end
         end
     end
