@@ -128,7 +128,7 @@ sys.taskInit(function()
         wlan.init()
         wlan.setMode(wlan.STATION)
         wlan.connect(ssid, password, 1)
-        local result, data = sys.waitUntil("IP_READY")
+        local result, data = sys.waitUntil("IP_READY", 30000)
         log.info("wlan", "IP_READY", result, data)
         device_id = wlan.getMac()
     elseif rtos.bsp() == "AIR105" then
@@ -142,6 +142,7 @@ sys.taskInit(function()
         --mobile.simid(2)
         LED = gpio.setup(27, 0, gpio.PULLUP)
         device_id = mobile.imei()
+        sys.waitUntil("IP_READY", 30000)
     end
 
     device_id = device_id:lower()
