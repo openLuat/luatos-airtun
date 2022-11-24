@@ -122,7 +122,7 @@ end
 sys.taskInit(function()
     if rtos.bsp() == "ESP32C3" then
         local ssid = "uiot"
-        local password = "1234567890"
+        local password = "12345678"
         -- TODO 改成esptouch配网
         LED = gpio.setup(12, 0, gpio.PULLUP)
         wlan.init()
