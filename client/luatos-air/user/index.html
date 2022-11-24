@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <header>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AirTun Get-Start</title>
+        <!-- fetch api-->
+        <script type="text/javascript">
+            function led(key) {
+                fetch("/api/netled/" + (key == 1 ? "on" : "off"))
+            }
+        </script>
+<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    </header>
+    <body>
+        <div class="container theme-showcase" role="main">
+            <div class="page-header">
+                <h1>点击按钮, led灯会亮起或熄灭</h1>
+            </div>
+            <p>
+                <button class="btn btn-lg btn-success" onclick="led(1)">LED亮</button>
+            </p>
+            <p>
+                <button class="btn btn-lg btn-warning" onclick="led(0)">LED灭</button>
+            </p>
+        </div>
+        <div class="container theme-showcase" >
+            <h4>Power by <a href="https://wiki.luatos.com">LuatOS</a></h4>
+        </div>
+    </body>
+</html>
