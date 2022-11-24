@@ -9,6 +9,15 @@
         <script type="text/javascript">
             function led(key) {
                 fetch("/api/netled/" + (key == 1 ? "on" : "off"))
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log('Success:', result);
+                    alert("执行成功")
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert("出错了 " + error)
+                });
             }
         </script>
 <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
