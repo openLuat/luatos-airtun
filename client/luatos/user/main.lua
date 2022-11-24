@@ -152,7 +152,7 @@ sys.taskInit(function()
     log.info("airtun", "topic up", topic_up)
     log.info("airtun", "topci down", topic_down)
     log.info("airtun", "===========================================")
-    log.info("airtun", "Pls open http://" .. device_id .. ".airtun.air32.cn")
+    log.info("airtun", "Pls open https://" .. device_id .. ".airtun.air32.cn")
     log.info("airtun", "===========================================")
 
     mqttc = mqtt.create(nil, mqtt_host, mqtt_port, mqtt_isssl)

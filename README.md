@@ -15,7 +15,7 @@
 
 所需要固件可以在release页面下载
 
-如需要翻阅客户端源码,可打开[client]目录
+如需要翻阅客户端源码,可打开[client](client)目录
 
 刷机教程 https://space.bilibili.com/532832
 
