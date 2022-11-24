@@ -37,7 +37,7 @@ local function airtun_conn(mqttClient)
     local msg = {action="conn"}
     msg.conn = {files={}}
     for i=1,#airtun_files do
-        if io.exists(airtun_files[i]) then
+        if io.exists("/lua/"..airtun_files[i]) then
             local filePath = "/lua/"..airtun_files[i]
             local sha1 = crypto.sha1(io.readFile(filePath), #io.readFile(filePath))       -- 使用sha1算法计算文件hash值
             msg.conn.files[airtun_files[i]] =  {sha1=sha1, size=io.fileSize(filePath)}
