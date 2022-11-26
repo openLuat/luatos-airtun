@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Session;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -42,7 +42,7 @@ import com.luatos.airtun.bean.LinkMessage;
 import com.luatos.airtun.ws.AirTunWsEndpoint;
 
 @IocBean(create = "init", depose = "depose")
-public class AppCore implements MqttCallback {
+public class AppCore implements MqttCallbackExtended {
 	
 	public static String VERSION = "1.0-Gift";
 
@@ -93,7 +93,6 @@ public class AppCore implements MqttCallback {
 		mqttc.setCallback(this);
 
 		mqttc.connect(connOpts);
-		mqttc.subscribe("$airtun/+/up");
 		log.info("airtun ready, version " + VERSION);
 	}
 
@@ -277,5 +276,16 @@ public class AppCore implements MqttCallback {
 	public void depose() throws MqttException {
 		if (mqttc != null)
 			mqttc.close(true);
+	}
+
+	@Override
+	public void connectComplete(boolean reconnect, String serverURI) {
+		try {
+			log.info("reconnect ? " + reconnect);
+			mqttc.subscribe("$airtun/+/up");
+		} catch (MqttException e) {
+			e.printStackTrace();
+			System.exit(255);
+		}
 	}
 }
