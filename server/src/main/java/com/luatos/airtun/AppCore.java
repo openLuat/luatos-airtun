@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Session;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -44,7 +44,7 @@ import com.luatos.airtun.ws.AirTunWsEndpoint;
 @IocBean(create = "init", depose = "depose")
 public class AppCore implements MqttCallbackExtended {
 	
-	public static String VERSION = "1.0-Gift";
+	public static String VERSION = "1.0.1-Gift";
 
 	protected static final Log log = Logs.get();
 
@@ -58,7 +58,7 @@ public class AppCore implements MqttCallbackExtended {
 	// 注意, 这个bean虽然是ioc bean, 但不能注入,因为有循环依赖
 	protected AirTunWsEndpoint endpoint;
 
-	public MqttClient mqttc;
+	public MqttAsyncClient mqttc;
 
 	public WeakHashMap<String, AsyncContext> acs = new WeakHashMap<String, AsyncContext>();
 
@@ -77,11 +77,12 @@ public class AppCore implements MqttCallbackExtended {
 
 //    	String broker = "tcp://lbsmqtt.airm2m.com:1883";
 		String broker = conf.get("airtun.mqtt.url", "tcp://broker-cn.emqx.io:1883");
+//		String broker = conf.get("airtun.mqtt.url", "tcp://mqtt.air32.cn:1883");
 		String clientId = conf.get("airtun.mqtt.client_id", R.UU32());
 		String username = conf.get("airtun.mqtt.username", R.UU32());
 		String password = conf.get("airtun.mqtt.password", R.UU32());
 		MemoryPersistence persistence = new MemoryPersistence();
-		mqttc = new MqttClient(broker, clientId, persistence);
+		mqttc = new MqttAsyncClient(broker, clientId, persistence);
 
 		// MQTT 连接选项
 		MqttConnectOptions connOpts = new MqttConnectOptions();
@@ -92,7 +93,7 @@ public class AppCore implements MqttCallbackExtended {
 
 		mqttc.setCallback(this);
 
-		mqttc.connect(connOpts);
+		mqttc.connect(connOpts).waitForCompletion();
 		log.info("airtun ready, version " + VERSION);
 	}
 
@@ -282,7 +283,7 @@ public class AppCore implements MqttCallbackExtended {
 	public void connectComplete(boolean reconnect, String serverURI) {
 		try {
 			log.info("reconnect ? " + reconnect);
-			mqttc.subscribe("$airtun/+/up");
+			mqttc.subscribe("$airtun/+/up", 1);
 		} catch (MqttException e) {
 			e.printStackTrace();
 			System.exit(255);
