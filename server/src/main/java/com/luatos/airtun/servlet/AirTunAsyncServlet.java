@@ -69,13 +69,24 @@ public class AirTunAsyncServlet extends HttpServlet implements WebServletFace {
 			msg.req.uri = req.getRequestURI();
 			msg.req.method = req.getMethod().toUpperCase();
 			msg.req.headers = new HashMap<String, String>();
+			msg.req.form = new NutMap();
 			int bodySize = req.getContentLength();
 			if (bodySize > 2048) {
 				log.warn("reject big req body");
 				resp.sendError(403);
 				return;
 			}
-			if (bodySize > 0) {
+
+			Enumeration<String> names = req.getParameterNames();
+			while (names.hasMoreElements()) {
+				String name = names.nextElement();
+				msg.req.form.put(name, req.getParameter(name));
+			}
+			String contenType = req.getHeader("Content-Type");
+			if (contenType != null && contenType.contains("form")) {
+				// 表单已经ok了
+			}
+			else if (bodySize > 0) {
 				ByteArrayOutputStream buff = new ByteArrayOutputStream(bodySize);
 				InputStream ins = req.getInputStream();
 				byte[] tmp = new byte[4096];
@@ -85,7 +96,6 @@ public class AirTunAsyncServlet extends HttpServlet implements WebServletFace {
 						break;
 					buff.write(tmp, 0, len);
 				}
-				String contenType = req.getHeader("Content-Type");
 				if (!Strings.isBlank(contenType)) {
 					if (contenType.contains("json")) {
 						try {
@@ -103,12 +113,6 @@ public class AirTunAsyncServlet extends HttpServlet implements WebServletFace {
 				} else {
 					msg.req.body = Base64.getEncoder().encodeToString(buff.toByteArray());
 				}
-			}
-			msg.req.form = new NutMap();
-			Enumeration<String> names = req.getParameterNames();
-			while (names.hasMoreElements()) {
-				String name = names.nextElement();
-				msg.req.form.put(name, req.getParameter(name));
 			}
 
 			// 处理一下部分字段,减少不必要的数据量

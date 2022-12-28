@@ -15,8 +15,8 @@ import com.luatos.airtun.AppCore;
  * 页面websocket入口
  *
  */
-@ServerEndpoint(value = "/ws/h2o", configurator = NutWsConfigurator.class)
-@IocBean
+@ServerEndpoint(value = "/ws/airtun", configurator = NutWsConfigurator.class)
+@IocBean(create = "init")
 public class AirTunWsEndpoint extends AbstractWsEndpoint {
 
 	@Inject
@@ -28,5 +28,9 @@ public class AirTunWsEndpoint extends AbstractWsEndpoint {
 		AirTunWsHandler handler = new AirTunWsHandler(clientId, app);
 		handler.join(clientId);
 		return handler;
+	}
+	
+	public void init() {
+		app.setEndpoint(this);
 	}
 }

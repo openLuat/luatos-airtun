@@ -44,7 +44,7 @@ import com.luatos.airtun.ws.AirTunWsEndpoint;
 @IocBean(create = "init", depose = "depose")
 public class AppCore implements MqttCallbackExtended {
 	
-	public static String VERSION = "1.0.1-Gift";
+	public static String VERSION = "1.1.0-TreeHole";
 
 	protected static final Log log = Logs.get();
 
@@ -58,7 +58,7 @@ public class AppCore implements MqttCallbackExtended {
 	// 注意, 这个bean虽然是ioc bean, 但不能注入,因为有循环依赖
 	protected AirTunWsEndpoint endpoint;
 
-	public MqttAsyncClient mqttc;
+	protected MqttAsyncClient mqttc;
 
 	public WeakHashMap<String, AsyncContext> acs = new WeakHashMap<String, AsyncContext>();
 
@@ -75,6 +75,10 @@ public class AppCore implements MqttCallbackExtended {
 		Files.createDirIfNoExists(dftDir);
 		Files.createDirIfNoExists(fragDir);
 
+		if (!conf.getBoolean("airtun.mqtt.enable", true)) {
+			log.info("mqtt support is disabled");
+			return;
+		}
 //    	String broker = "tcp://lbsmqtt.airm2m.com:1883";
 		String broker = conf.get("airtun.mqtt.url", "tcp://broker-cn.emqx.io:1883");
 //		String broker = conf.get("airtun.mqtt.url", "tcp://mqtt.air32.cn:1883");
@@ -97,7 +101,6 @@ public class AppCore implements MqttCallbackExtended {
 		log.info("airtun ready, version " + VERSION);
 	}
 
-	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		log.infof("arrived %s", topic);
 		String clientId = topic.split("/")[1];
@@ -108,7 +111,18 @@ public class AppCore implements MqttCallbackExtended {
 		if (buff[0] == '{' && buff[buff.length - 1] == '}') {
 			try {
 				LinkMessage msg = Json.fromJson(LinkMessage.class, new String(buff));
-				log.debugf("uplink %s %s", topic, Json.toJson(msg, JsonFormat.compact()));
+				messageArrived(clientId, msg);
+			} catch (Throwable e) {
+				log.info("uplink", e);
+			}
+		} else {
+			return;
+		}
+	}
+
+	public void messageArrived(String clientId, LinkMessage msg) throws Exception {
+			try {
+				//log.debugf("uplink %s %s", topic, Json.toJson(msg, JsonFormat.compact()));
 				if (msg.version != 1) {
 					log.info("only version 1 is ok");
 					return; // 当前仅处理version=1的上报
@@ -239,9 +253,6 @@ public class AppCore implements MqttCallbackExtended {
 			} catch (Throwable e) {
 				log.info("uplink", e);
 			}
-		} else {
-			return;
-		}
 	}
 
 	@Override
@@ -256,16 +267,26 @@ public class AppCore implements MqttCallbackExtended {
 
 	public boolean publish2client(String clientId, LinkMessage msg) {
 		JsonFormat jf = JsonFormat.full().setIndentBy("").setCompact(true).setIgnoreNull(true);
+		String data = Json.toJson(msg, jf);
 		try {
-			String topic = "$airtun/" + clientId + "/down";
-			String data = Json.toJson(msg, jf);
-			log.infof("down %s %s", topic, data);
-			mqttc.publish(topic, data.getBytes(), 1, false);
-			return true;
+			if (mqttc != null) {
+				String topic = "$airtun/" + clientId + "/down";
+				log.infof("down %s %s", topic, data);
+				mqttc.publish(topic, data.getBytes(), 1, false);
+			}
 		} catch (MqttException e) {
-			log.warn("down error", e);
+			log.warn("mqtt down error", e);
 		}
-		return false;
+		try {
+			endpoint.each(clientId, new Each<Session>() {
+				public void invoke(int index, Session ele, int length) throws ExitLoop, ContinueLoop, LoopException {
+					endpoint.sendText(ele.getId(), data);
+				}
+			});
+		} catch (Exception e) {
+			log.warn("ws down error", e);
+		}
+		return true;
 	}
 
 	public static String toClientId(String host) {
@@ -288,5 +309,9 @@ public class AppCore implements MqttCallbackExtended {
 			e.printStackTrace();
 			System.exit(255);
 		}
+	}
+	
+	public void setEndpoint(AirTunWsEndpoint endpoint) {
+		this.endpoint = endpoint;
 	}
 }
