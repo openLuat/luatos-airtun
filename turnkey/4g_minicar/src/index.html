@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <header>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AirTun Get-Start</title>
+        <!-- fetch api-->
+        <script type="text/javascript" >
+            function up(key) {
+                fetch("/api/netled/" + (key == 1 ? "up1" : "up0"))
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log('Success:', result);
+
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+
+                });
+            }
+
+            function left(key) {
+                fetch("/api/netled/" + (key == 1 ? "left1" : "left0"))
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log('Success:', result);
+
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+
+                });
+            }
+
+            function right(key) {
+                fetch("/api/netled/" + (key == 1 ? "right1" : "right0"))
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log('Success:', result);
+
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+
+                });
+
+            }
+
+            function down(key) {
+                fetch("/api/netled/" + (key == 1 ? "down1" : "down0"))
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log('Success:', result);
+
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+
+                });
+            }
+
+            function stop(key) {
+                fetch("/api/netled/" + (key == 1 ? "stop1" : "stop0"))
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log('Success:', result);
+
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+
+                });
+            }
+
+            function auto(key) {
+                fetch("/api/netled/" + (key == 1 ? "auto1" : "auto0"))
+                .then((response) => response.json())
+                .then((result) => {
+                    console.log('Success:', result);
+
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+
+                });
+            }
+
+            function video1(){
+
+
+                var videourl1=document.getElementById("video_url1").value
+
+                video1window.src=videourl1
+
+            }
+
+        </script>
+<!-- 最新版本的 Bootstrap 核心 CSS 文件 alert("执行成功")-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    </header>
+    <body>
+        <div class="container theme-showcase" role="main" style="text-align:center;">
+            <div class="page-header" >
+                <h1>小车控制端</h1>
+            </div>
+            <div class="container theme-showcase" role="main" style="text-align:center;">
+                <p>
+                <iframe id=video1window frameborder="1" width="50%" height="50%" src=""></iframe>
+            </p>
+            <p>
+            图传视频地址：<input type="text" id="video_url1">
+            </p>
+            <p>
+            <button class="btn btn-lg btn-success" onclick="video1()">打开图传</button>
+            </p>
+
+            </div>
+
+            <p></p>
+            <p></p>
+
+            <p>
+                <button class="btn btn-lg btn-success" ontouchstart="up(1)" ontouchend="up(0)" onmousedown="up(1)"  onmouseup="up(0)"  > 前进</button>
+                        </p>
+
+            <p>
+                <button class="btn btn-lg btn-success" ontouchstart="left(1)" ontouchend="left(0)" onmousedown="left(1)"  onmouseup="left(0)"  > 向左</button>
+
+                <button class="btn btn-lg btn-success" ontouchstart="right(1)" ontouchend="right(0)" onmousedown="right(1)"  onmouseup="right(0)"  > 向右</button>
+            </p>
+            <p>
+                <button class="btn btn-lg btn-success" ontouchstart="down(1)" ontouchend="down(0)" onmousedown="down(1)"  onmouseup="down(0)"  > 后退</button>
+            </p>
+            <p>
+                <button class="btn btn-lg btn-warning" ontouchstart="stop(1)" ontouchend="stop(0)" onmousedown="stop(1)"  onmouseup="stop(0)"">刹车</button>
+                <button class="btn btn-lg btn-success" onclick="auto(1)">自动巡航</button>
+                <button class="btn btn-lg btn-warning" onclick="auto(0)">停止巡航</button>
+            </p>
+
+                <div class="container theme-showcase" >
+            <h4>Power by <a href="https://wiki.luatos.com">LuatOS</a></h4>
+        </div>
+    </body>
+</html>

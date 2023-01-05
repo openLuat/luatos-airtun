@@ -35,9 +35,9 @@ LuatOS系列:
 
 请查阅文档 [自建服务器指南](server/deploy.md)
 
-## 待实现的功能
+## 应用合集
 
-TODO
+* [4G遥控小车](turnkey/4g_minicar/)
 
 ## 授权协议
 
