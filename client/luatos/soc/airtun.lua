@@ -125,7 +125,11 @@ sys.taskInit(function()
         local password = "12348888"
         log.info("wifi", ssid, password)
         -- TODO 改成esptouch配网
-        LED = gpio.setup(12, 0, gpio.PULLUP)
+        if rtos.bsp() == "ESP32C3" then
+            LED = gpio.setup(12, 0, gpio.PULLUP)
+        elseif rtos.bsp() == "ESP32S3" then
+            LED = gpio.setup(11, 0, gpio.PULLUP)
+        end
         wlan.init()
         wlan.setMode(wlan.STATION)
         wlan.connect(ssid, password, 1)
