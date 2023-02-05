@@ -7,8 +7,8 @@
 
 ## 详细描述请查阅文章
 
-TODO 公众号文章链接放这里
+[公众号文章链接](https://mp.weixin.qq.com/s/gdCehl2E9N1uvaFIeEQYkQ)
 
 ## 作者信息
 
-TODO 来show一下
+海阔凭鱼跃
