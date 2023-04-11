@@ -125,13 +125,7 @@ sys.taskInit(function()
         local password = "12345678"
         log.info("wifi", ssid, password)
         -- TODO 改成esptouch配网
-        if rtos.bsp() == "AIR101"then
-            LED = gpio.setup(pin.PB10, 0, gpio.PULLUP)
-        elseif rtos.bsp() == "AIR103" then
-            LED = gpio.setup(pin.PB26, 0, gpio.PULLUP)
-        else
-            LED = gpio.setup(12, 0, gpio.PULLUP) -- 当前就是ESP32系列
-        end
+        LED = gpio.setup(12, 0, gpio.PULLUP)
         wlan.init()
         wlan.setMode(wlan.STATION)
         wlan.connect(ssid, password, 1)
