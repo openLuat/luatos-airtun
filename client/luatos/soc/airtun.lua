@@ -125,7 +125,11 @@ sys.taskInit(function()
         local password = "12345678"
         log.info("wifi", ssid, password)
         -- TODO 改成esptouch配网
-        LED = gpio.setup(12, 0, gpio.PULLUP)
+        if rtos.bsp() == "AIR101" then
+            LED = gpio.setup(pin.PB10, 0, gpio.PULLUP)
+        else
+            LED = gpio.setup(12, 0, gpio.PULLUP)
+        end
         wlan.init()
         wlan.setMode(wlan.STATION)
         wlan.connect(ssid, password, 1)
