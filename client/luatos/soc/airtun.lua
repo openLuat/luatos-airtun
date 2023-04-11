@@ -120,12 +120,18 @@ function airtun_handle(linkmsg)
 end
 
 sys.taskInit(function()
-    if rtos.bsp():startsWith("ESP32") then
-        local ssid = "uiot123"
-        local password = "12348888"
+    if wlan and wlan.connect then
+        local ssid = "uiot"
+        local password = "12345678"
         log.info("wifi", ssid, password)
         -- TODO 改成esptouch配网
-        LED = gpio.setup(12, 0, gpio.PULLUP)
+        if rtos.bsp() == "AIR101"then
+            LED = gpio.setup(pin.PB10, 0, gpio.PULLUP)
+        elseif rtos.bsp() == "AIR103" then
+            LED = gpio.setup(pin.PB26, 0, gpio.PULLUP)
+        else
+            LED = gpio.setup(12, 0, gpio.PULLUP) -- 当前就是ESP32系列
+        end
         wlan.init()
         wlan.setMode(wlan.STATION)
         wlan.connect(ssid, password, 1)
@@ -158,8 +164,9 @@ sys.taskInit(function()
 
     mqttc = mqtt.create(nil, mqtt_host, mqtt_port, mqtt_isssl)
     mqttc:auth(mqtt_client_id, mqtt_username, mqtt_password)
-    mqttc:keepalive(240) -- 默认值240s
+    mqttc:keepalive(600) -- 默认值240s
     mqttc:autoreconn(true, 3000) -- 自动重连机制
+    -- mqttc:will(topic_up, "{}", 1)
     mqttc:on(
         function(mqtt_client, event, data, payload)
             if event == "conack" then
@@ -197,7 +204,7 @@ sys.taskInit(function()
     mqttc:connect()
     sys.waitUntil("mqtt_conack", 15000)
     while true do
-        local ret, topic, data, qos = sys.waitUntil("mqtt_pub", 60000)    
+        local ret, topic, data, qos = sys.waitUntil("mqtt_pub", 30*60*1000)    
         if ret then
             if topic == "close" then
                 break

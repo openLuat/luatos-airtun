@@ -6,6 +6,7 @@ VERSION = "1.0.0"
 _G.sys = require("sys")
 -- _G.sysplus = require("sysplus")
 
+pm.request(pm.LIGHT)
 require("airtun")
 
 -- 用户代码已结束---------------------------------------------
